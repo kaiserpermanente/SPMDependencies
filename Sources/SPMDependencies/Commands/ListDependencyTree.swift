@@ -18,7 +18,16 @@ extension Commands {
             abstract: "Print Swift Package Manager dependency tree"
         )
 
+        @Argument var input: String
+
         mutating func run() throws {
+            let file = Path(input)
+
+            if file.exists {
+                Logger.listTree.info("Package.swift file found for path: \(file.path)")
+            } else {
+                Logger.listTree.error("Package.swift file not found for path: \(file.path)")
+            }
         }
     }
 }

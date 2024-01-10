@@ -31,8 +31,6 @@ enum Commands {
 }
 
 extension Logger {
-	static let listTree = Logger(subsystem: "SPMDependencies",
-								  category: "ListTree")
-	static let listVersions = Logger(subsystem: "SPMDependencies",
-								   category: "ListVersions")
+	static let listTree = Logger(subsystem: "SPMDependencies", category: "ListTree")
+	static let listVersions = Logger(subsystem: "SPMDependencies", category: "ListVersions")
 }
