@@ -9,6 +9,6 @@
 import Foundation
 import ArgumentParser
 
-protocol ParsableSubCommand: ParsableCommand {
+protocol ParsableSubCommand: AsyncParsableCommand {
     static var verbose: Bool { get set }
 }

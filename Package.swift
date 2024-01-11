@@ -18,16 +18,15 @@ let package = Package(
     targets: [
         .target(
             name: "Utilities",
-            dependencies: [.product(name: "SwiftPMPackageCollections", package: "swift-package-manager")]
+            dependencies: [.product(name: "SwiftPM", package: "swift-package-manager")]
         ),
 
         .executableTarget(
             name: "SPMDependencies",
             dependencies: [
                 "Utilities",
-                .product(name: "SwiftPMPackageCollections", package: "swift-package-manager"),
+                .product(name: "SwiftPM", package: "swift-package-manager"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
-//                .product(name: "Backtrace", package: "swift-backtrace"),
             ]
         ),
 
@@ -48,9 +47,8 @@ let package = Package(
             name: "SPMDependenciesTests",
             dependencies: [
                 "SPMDependencies",
-                "TestUtilities",
-            ],
-            exclude: ["Inputs"]
-        ),
+                "TestUtilities"
+            ]
+        )
     ]
 )

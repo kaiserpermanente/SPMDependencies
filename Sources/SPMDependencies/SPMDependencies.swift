@@ -11,7 +11,7 @@ import Foundation
 import OSLog
 
 @main
-struct SPMDependencies: ParsableCommand {
+struct SPMDependencies: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "SPMDependencies",
         abstract: "A utility for showing Swift Package Manager dependency chains.",
