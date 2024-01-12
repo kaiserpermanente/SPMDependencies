@@ -26,14 +26,14 @@ extension Commands {
         )
 
         @Argument var input: String
-
+ 
         mutating func run() async throws {
             let file = Path(input)
 
             if file.exists && file.lastComponent == "Package.swift" {
                 Logger.listTree.info("Package.swift file found for path: \(file.path)")
 
-                let observability = ObservabilitySystem({ print("\($0): \($1)") })
+                let observability = ObservabilitySystem({ Logger.listTree.info("\($0): \($1)") })
 
                 let packagePath = try AbsolutePath(validating: file.normalize().path)
                 let location = try location(with: packagePath)
@@ -44,18 +44,18 @@ extension Commands {
 
                 // Manifest
                 let products = manifest.products.map({ $0.name }).joined(separator: ", ")
-                print("Products:", products)
+                Logger.listTree.info("Products: \(products)")
 
                 let targets = manifest.targets.map({ $0.name }).joined(separator: ", ")
-                print("Targets:", targets)
+                Logger.listTree.info("Targets: \(targets)")
 
                 // Package
                 let executables = package.targets.filter({ $0.type == .executable }).map({ $0.name })
-                print("Executable targets:", executables)
+                Logger.listTree.info("Executable targets: \(executables)")
 
                 // PackageGraph
                 let numberOfFiles = graph.reachableTargets.reduce(0, { $0 + $1.sources.paths.count })
-                print("Total number of source files (including dependencies):", numberOfFiles)
+                Logger.listTree.info("Total number of source files (including dependencies): \(numberOfFiles)")
             } else {
                 Logger.listTree.error("Package.swift file not found for path: \(file.path)")
             }
