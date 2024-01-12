@@ -11,7 +11,7 @@ import Foundation
 import OSLog
 
 extension Commands {
-	struct ListVersions: ParsableSubCommand {
+	struct ListVersions: AsyncParsableSubCommand {
 		static var verbose = false
 		static let configuration = CommandConfiguration(
 			commandName: "list-versions",
