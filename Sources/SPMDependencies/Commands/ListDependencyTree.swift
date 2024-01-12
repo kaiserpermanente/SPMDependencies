@@ -33,11 +33,11 @@ extension Commands {
             if file.exists && file.lastComponent == "Package.swift" {
                 Logger.listTree.info("Package.swift file found for path: \(file.path)")
 
-                let packagePath = try AbsolutePath(validating: file.normalize().path)
                 let observability = ObservabilitySystem({ print("\($0): \($1)") })
 
-                let workspace = try workspace(with: packagePath)
-
+                let packagePath = try AbsolutePath(validating: file.normalize().path)
+                let location = try location(with: packagePath)
+                let workspace = try workspace(with: location)
                 let manifest = try await workspace.loadRootManifest(at: packagePath, observabilityScope: observability.topScope)
                 let package = try await workspace.loadRootPackage(at: packagePath, observabilityScope: observability.topScope)
                 let graph = try workspace.loadPackageGraph(rootPath: packagePath, observabilityScope: observability.topScope)
@@ -61,7 +61,10 @@ extension Commands {
             }
         }
 
-        func workspace(with packagePath: AbsolutePath) throws -> Workspace {
+        func location(with packagePath: AbsolutePath) throws -> Workspace.Location {
+            return try Workspace.Location(forRootPackage: packagePath, fileSystem: localFileSystem)
+
+            #if false
             // This computes the path of this package root based on the file location
             let packageFolderPath = packagePath.parentDirectory
             Logger.listTree.info("packagePath: \(packagePath)")
@@ -80,19 +83,22 @@ extension Commands {
             // There are several levels of information available.
             // Each takes longer to load than the level above it, but provides more detail.
 
-            var location: Workspace.Location
             let spmConfigurationFolder = idiomaticSwiftPMDirectory.appending("configuration") // try localFileSystem.swiftPMConfigurationDirectory
             let spmSecurityFolder = idiomaticSwiftPMDirectory.appending("security") //try localFileSystem.swiftPMSecurityDirectory
             let spmCacheFolder = idiomaticSwiftPMDirectory.appending("cache") // try localFileSystem.swiftPMCacheDirectory
-            location = Workspace.Location(
+            return Workspace.Location(
                 scratchDirectory: Workspace.DefaultLocations.scratchDirectory(forRootPackage: packageFolderPath),
                 editsDirectory: Workspace.DefaultLocations.editsDirectory(forRootPackage: packageFolderPath),
                 resolvedVersionsFile: Workspace.DefaultLocations.resolvedVersionsFile(forRootPackage: packageFolderPath),
                 localConfigurationDirectory: Workspace.DefaultLocations.configurationDirectory(forRootPackage: packageFolderPath),
                 sharedConfigurationDirectory: spmConfigurationFolder,
                 sharedSecurityDirectory: spmSecurityFolder,
-                sharedCacheDirectory: spmCacheFolder)
+                sharedCacheDirectory: spmCacheFolder
+            )
+            #endif
+        }
 
+        func workspace(with location: Workspace.Location) throws -> Workspace {
             let workspace = try Workspace(
                 fileSystem: localFileSystem,
                 location: location,
